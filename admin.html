@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MSI SMS – Admin Panel</title>
+<style>
+:root{--bg:#f4f5f9;--surface:#fff;--inner:#f0f1f6;--text:#14161f;--muted:#667085;--line:#dfe2ec;--gold:#b8860b;--blue:#2f6fed;--green:#12a971;--red:#e5484d;--grad:linear-gradient(135deg,#7c3aed,#f97316);--sel:#ece7ff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0d16;--surface:#10131f;--inner:#151927;--text:#f2f3f8;--muted:#9aa1b5;--line:#252a3b;--gold:#d4a73a;--blue:#7aa2ff;--green:#3ddc97;--sel:#241a52}}
+:root[data-theme="dark"]{--bg:#0b0d16;--surface:#10131f;--inner:#151927;--text:#f2f3f8;--muted:#9aa1b5;--line:#252a3b;--gold:#d4a73a;--blue:#7aa2ff;--green:#3ddc97;--sel:#241a52}
+*{box-sizing:border-box}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 14px}
+.ib{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:18px;position:relative;flex:none}
+.ttl{flex:1;min-width:0}.ttl b{display:block;font-size:1.05rem}.ttl span{color:var(--muted);font-size:.85rem}
+.badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:11px;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center}
+main{max-width:900px;margin:0 auto;padding:16px 14px 90px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}
+.hero{border-left:4px solid var(--gold)}
+.eyebrow{color:var(--gold);font-weight:700;font-size:.85rem;letter-spacing:.03em;text-transform:uppercase}
+h1{font-size:2.2rem;margin:4px 0 6px}h2{font-size:1.4rem;margin:2px 0 14px}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{flex:1;min-width:140px;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.btn.spin::before{content:"⟳ ";display:inline-block;animation:r .8s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--inner);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat small{color:var(--blue);font-size:.95rem}.stat strong{display:block;font-size:2rem;margin:2px 0}.stat i{color:var(--green);font-style:normal}
+.news{display:flex;gap:12px;padding:16px;background:var(--inner);border:1px solid var(--line);border-radius:16px;margin-top:12px}
+.news .ic{width:40px;height:40px;border-radius:12px;background:rgba(61,220,151,.14);display:grid;place-items:center;flex:none}
+.news b{display:block}.news p{margin:4px 0;color:var(--muted);font-size:.92rem}
+table{width:100%;border-collapse:collapse}th{color:var(--muted);font-size:.8rem;text-align:left;text-transform:uppercase;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:14px 8px;border-bottom:1px solid var(--line)}
+.chart{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.8rem;color:var(--muted)}
+.bar div{width:100%;max-width:42px;border-radius:8px 8px 0 0;background:var(--grad);min-height:4px}
+.bar em{font-style:normal;color:var(--text);font-size:.8rem;margin-bottom:4px}
+.fab{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;border:0;background:var(--grad);color:#fff;font-size:22px;box-shadow:0 6px 20px rgba(124,58,237,.4);z-index:9}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.side{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--bg);border-right:1px solid var(--line);transform:translateX(-100%);transition:.25s;z-index:21;overflow-y:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 20px}
+body.open .ov{opacity:1;pointer-events:auto}body.open .side{transform:none}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.brand .logo{flex:none;width:40px;height:40px}.logo img{width:100%;height:100%;display:block;object-fit:contain}
+.brand div{flex:1}.brand b{display:block}.brand span{color:var(--muted);font-size:.85rem}
+.nav{width:100%;text-align:left;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);margin-bottom:8px;display:flex;align-items:center;gap:12px;font-size:1.02rem}
+.nav .ch{margin-left:auto;display:grid;transition:.2s}
+.nav.act{background:var(--sel);border-left:3px solid var(--gold)}
+.nav.opn{background:var(--sel)}.nav.opn .ch{transform:rotate(180deg)}
+.sub{display:none;margin:0 0 8px 28px}
+.sub.show{display:block}.sub a{display:flex;align-items:center;gap:12px;padding:13px 14px;margin-bottom:6px;border-radius:12px;background:var(--inner);color:var(--text);text-decoration:none}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+u{display:contents}
+.top{gap:6px}.top .ib{width:36px;height:36px;border-radius:10px}.top .ttl b{font-size:.95rem;line-height:1.2}
+.pg{display:none}.pg.on{display:block}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.g{background:#228a5c;border-color:#2fa36f;color:#fff;box-shadow:0 8px 22px rgba(124,58,237,.22)}
+.btn.nf{flex:none;min-width:0}.btn.wide{display:flex;width:100%}
+.rf.spin svg{animation:r .8s linear infinite}.btn.rf.spin::before{content:none}
+.pg label{display:block;font-weight:600;margin:0 0 8px;font-size:1.05rem}
+.pg select,.pg input:not([type=checkbox]){width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:0 16px;font:inherit;outline:none}
+.pg select:focus,.pg input:focus{border-color:var(--blue)}
+.f{margin-bottom:16px}
+.sel{position:relative}.sel select{appearance:none;padding-right:44px}
+.sel::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border:solid var(--text);border-width:0 2px 2px 0;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.dt{position:relative}.dt input{padding-right:56px}
+.dt button{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);display:grid;place-items:center}
+.hd{display:grid;grid-template-columns:minmax(90px,.4fr) 1fr;gap:16px;align-items:start;margin-bottom:20px}.hd h2{margin:2px 0 0}.acts{display:grid;gap:10px}
+.card.big{border-radius:28px}.card.big h1{font-size:2.4rem;line-height:1.15}
+.msg{color:var(--muted);font-size:.92rem;min-height:1.2em;margin-top:10px}
+.opt{display:flex;gap:14px;align-items:center;padding:16px;border-radius:18px;border:1.5px solid var(--gold);background:rgba(212,167,58,.08);box-shadow:0 0 0 4px rgba(212,167,58,.12)}
+.oi{width:44px;height:44px;border-radius:12px;background:var(--inner);display:grid;place-items:center;flex:none}.opt b{font-size:1.15rem}.opt p{margin:2px 0 0;color:var(--muted)}
+.kv{background:var(--inner);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}.kv small{color:var(--muted);display:block}.kv b{font-size:1.4rem}
+.sn{margin:0;padding-left:22px}.sn li{margin-bottom:10px}
+.tl{display:grid;grid-template-columns:1.3fr 1fr;padding:12px 10px;margin-top:22px;color:var(--muted);font-size:.85rem;text-transform:uppercase;border-bottom:1px solid var(--line);position:relative}
+.tl::after{content:"";position:absolute;left:0;bottom:-3px;width:49%;height:4px;background:var(--muted);opacity:.5}
+.empty{margin-top:4px;border:1.5px dashed var(--line);border-radius:16px;padding:34px 10px;text-align:center;color:var(--muted)}.empty svg{width:28px;height:28px}.empty p{margin:18px 0 0;font-size:1.15rem}
+.pgn{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}.pgn .btn{padding:10px 16px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.pg .chip{display:flex;align-items:center;gap:12px;margin:0;padding:10px 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-weight:500;font-size:1rem;cursor:pointer}
+.chip input{appearance:none;width:22px;height:22px;margin:0;border-radius:6px;border:1.5px solid var(--muted);background:#fff;display:grid;place-items:center}
+.chip input:checked{background:#228a5c;border-color:#228a5c}.chip input:checked::after{content:"✓";color:#fff;font-size:14px;line-height:1}
+.tw{overflow-x:auto;margin-top:24px;border-bottom:2px solid var(--blue)}.tw table{min-width:560px}.tw th{white-space:nowrap}
+.gt{display:flex;justify-content:space-between;align-items:center;padding:14px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}.gt b{color:var(--blue);text-transform:uppercase}.gt small{display:block;color:var(--muted);text-transform:uppercase;font-size:.8rem}
+.sub a.act{background:var(--sel)}
+.ck{appearance:none;width:22px;height:22px;margin:0;border-radius:6px;border:1.5px solid var(--muted);background:#fff;display:grid;place-items:center;cursor:pointer}
+.ck:checked{background:#228a5c;border-color:#228a5c}.ck:checked::after{content:"✓";color:#fff;font-size:14px;line-height:1}
+.dw{overflow-x:auto;margin-top:22px}.dw th{padding:16px 12px;white-space:nowrap;border-bottom:1px solid var(--line)}.dw td{padding:18px 12px;white-space:nowrap}
+.hr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.hr h2{margin:2px 0 0}.hr .btn{padding:12px 22px}
+.btn.pp{background:var(--sel);border-color:#5b45c9}
+.sp{border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px}
+.sel.pill select{border-radius:999px}
+.cbx{position:relative}.pg .cbx input{cursor:pointer}.pg .cbx.open input{border-color:#6d4fe0;box-shadow:0 0 0 3px rgba(109,79,224,.28)}
+.ddl{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:6;display:none;max-height:340px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.cbx.open .ddl{display:block}.ddl div{padding:18px 20px;font-weight:600;cursor:pointer}.ddl div:hover{background:var(--sel)}
+.btn.g:disabled{opacity:.55;cursor:not-allowed}
+.gh{display:flex;align-items:center;gap:12px;margin-bottom:10px}.gh h2{margin:0}
+.gi{width:44px;height:44px;border-radius:12px;border:1px solid var(--gold);background:rgba(212,167,58,.12);color:var(--gold);display:grid;place-items:center;flex:none}
+.si{position:relative}.si svg{position:absolute;left:16px;top:15px;width:20px;height:20px;color:var(--muted)}.pg .si input{padding-left:48px}
+.card .card{background:var(--inner);border-radius:22px;margin-bottom:12px}
+.tp{border-top:4px solid #228a5c}.lf{border-left:4px solid #228a5c}
+.badg{display:inline-flex;align-items:center;padding:10px 18px;border-radius:999px;background:rgba(34,138,92,.22);color:#3ddc97;font-weight:700}
+.eg{color:#3ddc97;font-weight:700;letter-spacing:.03em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.hh{font-size:2rem;line-height:1.2;margin:0 0 8px}.bn{font-size:2.4rem;font-weight:800;margin:4px 0 10px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px}
+.tab{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:0;background:none;color:var(--text);font-weight:600;font-size:1.05rem;cursor:pointer}
+.tab.on{background:rgba(34,138,92,.2);color:#3ddc97}
+.lst>div{padding:18px 20px;border-top:1px solid var(--line)}.lst small{color:var(--muted);display:block}.lst b{font-size:1.9rem}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+.tkb{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px}.tkb .t{word-break:break-all;margin-bottom:10px}
+.cdx{background:var(--bg);border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.cdx .h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.cdx pre{margin:0;padding:16px;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.dw.box{border:1px solid var(--line);border-radius:18px;background:var(--inner)}
+.sc{background:var(--inner);border:2px solid var(--line);border-radius:26px;padding:22px;margin-bottom:12px}.sc small{color:var(--muted);display:block;font-size:1.05rem}.sc b{font-size:2.6rem;display:block;line-height:1.3}
+.bi svg{width:34px;height:34px}
+.fl{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.fl button{padding:12px 22px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:1.05rem;cursor:pointer}
+.fl button.on{background:linear-gradient(135deg,#f0a93a,#7c3aed);border-color:transparent;color:#fff}
+.nc{border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:14px;background:var(--inner)}
+.nc.un{border-color:#6e5a2a;background:rgba(212,167,58,.07)}
+.nc .ic2{width:48px;height:48px;border-radius:14px;background:var(--surface);display:grid;place-items:center;margin-bottom:16px}
+.nc h3{margin:0 0 8px;font-size:1.25rem;display:flex;justify-content:space-between;align-items:center}
+.nw{background:#7c3aed;color:#fff;font-size:.9rem;padding:6px 14px;border-radius:999px;font-weight:600}
+.nc .mt{display:flex;justify-content:space-between;color:var(--muted);margin-top:14px}
+.nc .ev{margin-top:14px;background:none;border:0;color:var(--muted);padding:0;cursor:pointer}
+.chat{display:flex;flex-direction:column;min-height:560px}
+.ch2{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cm2{border:1px solid var(--line);border-radius:22px;padding:18px;background:var(--inner);margin:12px 0;max-width:92%}
+.cm2 .w{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;align-items:baseline}.cm2 .w small{color:var(--muted)}
+.sm{padding:8px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer}
+.pg textarea{width:100%;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:14px 16px;font:inherit;outline:none}
+.cin{display:flex;gap:12px;align-items:flex-end;border-top:1px solid var(--line);padding-top:16px;margin-top:auto}
+.cin textarea{flex:1;height:84px;resize:none}
+.pf label{color:var(--muted);font-size:.95rem}
+.pf2{display:flex;gap:16px;align-items:center}.pf2 .gi{width:56px;height:56px;border-color:transparent;background:rgba(34,138,92,.2)}
+.av{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#e8a840,#7c3aed);color:#fff;font-size:1.8rem;font-weight:800;display:grid;place-items:center;margin-bottom:12px}
+.note{display:flex;gap:12px;padding:16px;border-radius:16px;border:1px solid #1f4a3d;background:rgba(34,138,92,.12);margin-bottom:16px}
+.pg input:disabled,.pg select:disabled{opacity:.6}
+.dl{padding:0;border-radius:36px;overflow:hidden}.dl .a{padding:28px 24px}.dl .b{padding:24px;background:var(--inner)}
+.tile{width:74px;height:74px;border-radius:22px;background:#241a52;display:grid;place-items:center;color:#d4a73a;margin-bottom:18px}.tile svg{width:34px;height:34px}
+.dl ol{padding-left:24px;line-height:2}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="menu" aria-label="Menu" data-i="menu"></button>
+  <div class="ttl"><b>Dashboard</b><span>Admin</span></div>
+  <button class="ib" aria-label="Language" data-i="globe"></button>
+  <button class="ib" id="theme" aria-label="Theme" data-i="sun"></button>
+  <button class="ib" aria-label="Chat" data-i="chat"></button>
+  <button class="ib" aria-label="Notifications"><u data-i="bell"></u><span class="badge" style="display:none">0</span></button>
+  <button class="ib" aria-label="Logout" data-i="out"></button>
+</header>
+<main id="mn"></main>
+<button class="fab" id="fab" aria-label="Menu">☰</button>
+<div class="ov" id="ov"></div>
+<aside class="side" id="side">
+  <div class="brand"><div class="logo"><img src="data:image/webp;base64,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" alt="MSI SMS"></div><div><b>MSI SMS</b><span>Admin</span></div><button class="ib" id="close" data-i="x"></button></div>
+  <nav id="nv"></nav>
+</aside>
+<script>
+/* ===== FIREBASE CONFIG: paste your values here (see README). already filled for msi-sms-panel ===== */
+window.MSI_CONFIG={apiKey:"AIzaSyDcAqsJE-iYBfrPr4KdezItVHhdHndWBWw",authDomain:"msi-sms-panel.firebaseapp.com",projectId:"msi-sms-panel",storageBucket:"msi-sms-panel.firebasestorage.app",messagingSenderId:"954968566171",appId:"1:954968566171:web:5b1ec421a617eaa969193e",measurementId:"G-Z11R7GFCWW"};
+</script>
+<script>(function(){
+const C=window.MSI_CONFIG||{},FB=!!C.apiKey;
+const em=u=>u.toLowerCase()+'@msi-sms.app';
+const subs=new Set(),watchers=new Set();
+const MSI={mode:FB?'firebase':'local',me:undefined,flash:'',
+ listen(cb){subs.add(cb);if(MSI.me!==undefined)cb(MSI.me);return()=>subs.delete(cb)}};
+let busy=false;
+const emit=p=>{if(busy)return;MSI.me=p;[...subs].forEach(f=>{try{f(p)}catch(e){console.error("MSI listener error:",e)}})};
+MSI.chk=d=>{if(!/^[a-z0-9_.-]{3,30}$/i.test(d.username||''))throw new Error('Username must be 3–30 characters: letters, numbers, . _ -');if((d.password||'').length<8)throw new Error('Password must be at least 8 characters.')};
+const prof=(d,role,status,x)=>Object.assign({username:d.username.toLowerCase(),name:d.name||'',email:d.email||'',whatsapp:d.whatsapp||'',country:d.country||'',role,status,createdAt:Date.now()},x||{});
+const flt=(r,f)=>r.filter(u=>u.role===f.role&&(!f.agentId||u.agentId===f.agentId)).sort((a,b)=>b.createdAt-a.createdAt);
+if(!FB){
+ const L={get u(){try{return JSON.parse(localStorage.msi_users||'[]')}catch(e){return[]}},set u(v){localStorage.msi_users=JSON.stringify(v)}};
+ const h=async s=>{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('msi:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}return s};
+ const pub=u=>{if(!u)return null;const r=Object.assign({},u);delete r.pw;return r};
+ const me=()=>pub(L.u.find(u=>u.uid===localStorage.msi_sess));
+ const push=()=>{emit(me()||null);watchers.forEach(w=>w())};
+ addEventListener('storage',push);
+ const add=async(d,role,status,x)=>{MSI.chk(d);const a=L.u;if(a.some(u=>u.username===d.username.toLowerCase()))throw new Error('That username is already taken.');const n=Object.assign(prof(d,role,status,x),{uid:'u'+Date.now()+Math.random().toString(36).slice(2,7),pw:await h(d.password)});a.push(n);L.u=a;return n};
+ const mod=(uid,f)=>{const a=L.u,i=a.findIndex(u=>u.uid===uid);if(i<0)throw new Error('User not found.');Object.assign(a[i],f);L.u=a;push()};
+ Object.assign(MSI,{
+  async login(un,pw){const u=L.u.find(x=>x.username===un.toLowerCase());if(!u||u.pw!==await h(pw))throw new Error('Wrong username or password.');localStorage.msi_sess=u.uid;push()},
+  async register(d){await add(d,'agent','pending');push()},
+  async createUser(d){await add(d,d.role,d.status||'active',Object.assign(d.role==='client'?{agentId:d.agentId}:{},d.extra||{}));push()},
+  async logout(){delete localStorage.msi_sess;push()},
+  watch(f,cb){const w=()=>cb(flt(L.u.map(pub),f));watchers.add(w);w();return()=>watchers.delete(w)},
+  async setStatus(uid,s){mod(uid,{status:s})},
+  async updateProfile(uid,f){mod(uid,f)},
+  async changePassword(c,n){const u=L.u.find(x=>x.uid===localStorage.msi_sess);if(u.pw!==await h(c))throw new Error('Current password is wrong.');mod(u.uid,{pw:await h(n)})},
+  async adminExists(){return L.u.some(u=>u.role==='admin')},
+  async bootstrapAdmin(d){if(await MSI.adminExists())throw new Error('An admin already exists.');const n=await add(d,'admin','active');localStorage.msi_sess=n.uid;push()}
+ });
+ setTimeout(push,0);
+}else{
+ let A,Au,Fs,auth,db,app2,unMe=()=>{};
+ const ready=(async()=>{const B='https://www.gstatic.com/firebasejs/10.14.1/';[A,Au,Fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+  const app=A.initializeApp(C);auth=Au.getAuth(app);db=Fs.getFirestore(app);
+  Au.onAuthStateChanged(auth,u=>{unMe();if(!u){emit(null);return}unMe=Fs.onSnapshot(Fs.doc(db,'users',u.uid),s=>{if(s.exists())emit(Object.assign({uid:u.uid},s.data()))},()=>emit(null))})})();
+ const M={'auth/invalid-credential':'Wrong username or password.','auth/user-not-found':'Wrong username or password.','auth/wrong-password':'Wrong username or password.','auth/email-already-in-use':'That username is already taken.','auth/weak-password':'Password is too weak.','auth/too-many-requests':'Too many attempts. Try again later.','auth/network-request-failed':'Network error. Check your connection.','permission-denied':'Permission denied by the database rules.'};
+ const fe=e=>new Error(M[e.code]||e.message||'Something went wrong.');
+ const udoc=id=>Fs.doc(db,'users',id);
+ Object.assign(MSI,{
+  async login(un,pw){await ready;try{await Au.signInWithEmailAndPassword(auth,em(un),pw)}catch(e){throw fe(e)}},
+  async register(d){MSI.chk(d);await ready;busy=true;try{const c=await Au.createUserWithEmailAndPassword(auth,em(d.username),d.password);await Fs.setDoc(udoc(c.user.uid),prof(d,'agent','pending'))}catch(e){try{await Au.signOut(auth)}catch(_){}busy=false;emit(null);throw fe(e)}try{await Au.signOut(auth)}catch(_){}busy=false;emit(null)},
+  async createUser(d){MSI.chk(d);await ready;app2=app2||A.initializeApp(C,'sec');const a2=Au.getAuth(app2);
+   try{const c=await Au.createUserWithEmailAndPassword(a2,em(d.username),d.password);await Fs.setDoc(udoc(c.user.uid),prof(d,d.role,d.status||'active',Object.assign(d.role==='client'?{agentId:d.agentId}:{},d.extra||{})));await Au.signOut(a2)}catch(e){try{await Au.signOut(a2)}catch(_){}throw fe(e)}},
+  async logout(){await ready;await Au.signOut(auth)},
+  watch(f,cb){let un=()=>{};ready.then(()=>{const w=[Fs.where('role','==',f.role)];if(f.agentId)w.push(Fs.where('agentId','==',f.agentId));un=Fs.onSnapshot(Fs.query.apply(null,[Fs.collection(db,'users')].concat(w)),s=>cb(flt(s.docs.map(x=>Object.assign({uid:x.id},x.data())),f)),()=>cb([]))});return()=>un()},
+  async setStatus(uid,s){await ready;try{await Fs.updateDoc(udoc(uid),{status:s})}catch(e){throw fe(e)}},
+  async updateProfile(uid,f){await ready;try{await Fs.updateDoc(udoc(uid),f)}catch(e){throw fe(e)}},
+  async changePassword(c,n){await ready;try{const u=auth.currentUser;await Au.reauthenticateWithCredential(u,Au.EmailAuthProvider.credential(u.email,c));await Au.updatePassword(u,n)}catch(e){throw fe(e)}},
+  async adminExists(){await ready;return(await Fs.getDoc(Fs.doc(db,'meta','admin'))).exists()},
+  async bootstrapAdmin(d){MSI.chk(d);await ready;try{const c=await Au.createUserWithEmailAndPassword(auth,em(d.username),d.password),b=Fs.writeBatch(db);b.set(Fs.doc(db,'meta','admin'),{uid:c.user.uid,at:Date.now()});b.set(udoc(c.user.uid),prof(d,'admin','active'));await b.commit()}catch(e){throw fe(e)}}
+ });
+}
+if(!FB)addEventListener('DOMContentLoaded',()=>{const d=document.createElement('div');d.textContent='DEMO MODE: data stays in this browser. Add Firebase config for real-time. (tap to hide)';d.style.cssText='position:fixed;left:8px;bottom:8px;z-index:9999;background:#b8860b;color:#fff;font:12px system-ui;padding:6px 10px;border-radius:10px;max-width:70vw;cursor:pointer;opacity:.92';d.onclick=()=>d.remove();document.body.appendChild(d)});
+window.MSI=MSI;
+})();
+</script>
+<script>
+const b=document.body,t=n=>b.classList.toggle('open',n);
+['menu','fab'].forEach(i=>document.getElementById(i).onclick=()=>t(true));
+['close','ov'].forEach(i=>document.getElementById(i).onclick=()=>t(false));
+const P={dash:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 1.8 4.5 4.5"/>',
+uplus:'<circle cx="10" cy="8" r="3.5"/><path d="M3 20c0-3.6 3-6 7-6M18 14v6M15 17h6"/>',
+sliders:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H15a3 3 0 010 6H9a3 3 0 000 6h6.5"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',
+bill:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',
+code:'<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+chat:'<path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5"/>',
+ann:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4zM10 21h4M2 8c.5-2 1.5-3.5 3-4.5M22 8c-.5-2-1.5-3.5-3-4.5"/>',
+bell:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4zM10 21h4"/>',
+dl:'<path d="M12 4v11M7 11l5 5 5-5M4 20h16"/>',
+prof:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 19c1.5-3 4-4 6-4s4.5 1 6 4"/>',
+pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
+clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h6"/>',
+chev:'<path d="M6 9l6 6 6-6"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+out:'<path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/>',
+cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',plus:'<path d="M12 5v14M5 12h14"/>',refresh:'<path d="M20 12a8 8 0 11-2.3-5.7M20 4v5h-5"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/>',exp:'<path d="M7 3h7l4 4v14H7zM14 3v4h4M12 11v5M10 14l2 2 2-2"/>',txt:'<path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/>',uminus:'<circle cx="10" cy="8" r="3.5"/><path d="M3 20c0-3.6 3-6 7-6M15 17h6"/>',chk:'<path d="M5 12l5 5 9-10"/>',hook:'<circle cx="12" cy="6" r="2.5"/><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M11 8.5L7 14.5M13 8.5l4 6M8.5 17h7"/>',shield:'<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/>',book:'<path d="M3 5h7a2 2 0 012 2v13a2 2 0 00-2-2H3zM21 5h-7a2 2 0 00-2 2v13a2 2 0 012-2h7z"/>',link:'<path d="M9 15l6-6M11 7l1.5-1.5a4 4 0 016 6L17 13M13 17l-1.5 1.5a4 4 0 01-6-6L7 11"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',eyeoff:'<path d="M3 3l18 18M6 8c-2.500 1.800-4 4-4 4s4 7 10 7c1.600 0 3-.4 4.200-1M9.500 5.300C10.300 5.100 11.100 5 12 5c6 0 10 7 10 7s-.9 1.600-2.500 3.200"/>',wallet:'<path d="M4 7l2-3h12l2 3M4 7h16v13H4zM4 13h5l1 2h4l1-2h5"/>',term:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10l3 2-3 2M13 14h3"/>',okc:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',save:'<path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/>',send:'<path d="M4 12l16-8-6 16-3-7z"/>',checks:'<path d="M2 13l4 4 8-9M10 15l2 2 8-10"/>',mob:'<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M12 17h.01"/>'};
+const S=n=>`<svg class="i" viewBox="0 0 24 24">${P[n]}</svg>`;
+const q=s=>document.querySelector(s),ERR='Unable to reach the server. Please try again later.';
+const CFG={api:''};
+const PAGES={};
+const esc=s=>String(s).replace(/"/g,'&quot;');
+const fld=([l,ty,o,ph,req])=>{const r=req?' data-req':'';let c;
+ if(ty==='s')c=`<div class="sel"><select${r}>${(o||[]).map(x=>`<option>${x}</option>`).join('')}</select></div>`;
+ else if(ty==='a')c=`<textarea style="height:120px" placeholder="${esc(ph||'')}"${r}></textarea>`;
+ else c=`<input type="${{n:'number',d:'date',p:'password',e:'email',dt:'datetime-local',f:'file'}[ty]||'text'}" placeholder="${esc(ph||'')}"${r}>`;
+ return `<div class="f"><label>${l}${req?' *':''}</label>${c}</div>`};
+const chips=a=>`<div class="chips">${a.map(x=>`<label class="chip"><input type="checkbox">${x}</label>`).join('')}</div>`;
+const list=({eb,title,desc,filters=[],cols,empty,exp,extra=''})=>`<section class="card"><div class="hr"><div><div class="eyebrow">${eb}</div><h2>${title}</h2></div><button class="btn nf rf"><u data-i="refresh"></u>Refresh</button></div>${desc?`<p class="muted" style="margin:0 0 18px">${desc}</p>`:''}${filters.map(fld).join('')}${extra}${filters.length?`<button class="btn g wide sb"><u data-i="search"></u>Search</button>`:''}${exp?`<button class="btn wide ax" style="margin-top:10px"><u data-i="exp"></u>Export</button>`:''}<div class="msg"></div><div class="dw box"><table style="min-width:${cols.length*130}px"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}" class="muted">${empty}</td></tr></tbody></table></div><div class="pgn"><button class="btn nf" disabled>Prev</button><span>Showing 0 to 0 of 0 entries - 1 / 1</span><button class="btn nf" disabled>Next</button></div></section>`;
+const form=({eb,title,desc,fields,btn,mid='',more=''})=>`<section class="card"><div class="eyebrow">${eb}</div><h2>${title}</h2>${desc?`<p class="muted" style="margin:0 0 18px">${desc}</p>`:''}<form class="af">${fields.map(fld).join('')}${mid}<button class="btn g wide" type="submit"><u data-i="save"></u>${btn}</button>${more}<div class="msg"></div></form></section>`;
+const ax=l=>`<button class="btn wide ax" type="button" style="margin-top:10px">${l}</button>`;
+
+const kpi=['Messages today','Messages this month','Active agents','Pending approvals','Free numbers','Allocated numbers','Pending payouts','Provider alerts'];
+const mini=(eb,title,cols,empty)=>`<section class="card"><div class="eyebrow">${eb}</div><h2>${title}</h2><div class="dw box"><table style="min-width:${cols.length*130}px"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}" class="muted">${empty}</td></tr></tbody></table></div></section>`;
+PAGES.dash=`<section class="card hero"><div class="eyebrow">MSI SMS Admin</div><h1>Admin Dashboard</h1><p class="muted" style="margin:0">Live platform overview. Updated <span id="ts">—</span>.</p><div class="row" style="align-items:center"><span class="badg" style="flex:1;background:rgba(255,255,255,.06);color:var(--muted)">Not connected</span><button class="btn nf rf"><u data-i="refresh"></u>Refresh</button></div></section>`
++`<section class="card"><div class="eyebrow">Overview</div><h2>Platform Overview</h2><div class="stats">${kpi.map(k=>`<div class="stat"><small>${k}</small><strong>0</strong></div>`).join('')}</div></section>`
++`<section class="card"><div class="eyebrow">Traffic</div><h2>Messages Last 7 Days</h2><div class="chart" id="chart"></div></section>`
++`<section class="card"><div class="eyebrow">Live</div><h2>Live Activity</h2><div class="empty"><p>Waiting for live events.</p></div></section>`
++mini('Agents','Top Agents Today',['Agent','Messages','Earnings'],'No activity yet.')
++mini('Providers','Provider Health',['Provider','Status','Last sync','Last error'],'No providers connected.');
+
+PAGES.agents=list({eb:'User Management',title:'Agents',desc:'Approve, suspend and review every agent account.',filters:[['Search','t',0,'Username, name or email'],['Status','s',['All','Pending approval','Active','Suspended','Blocked']]],cols:['Username','Name','Email','Clients','Numbers','Status','Last login','Actions'],empty:'No agents yet.',exp:1})
++form({eb:'Agent Account',title:'Create Agent',fields:[['Username','t',0,'',1],['Password','p',0,'',1],['Full name','t',0,'',1],['Email','e',0,'',1],['WhatsApp number','t',0,'Include country code'],['Country','t'],['Max clients','n',0,'Leave empty for the default'],['Status','s',['Active','Pending approval','Suspended']]],btn:'Create agent'});
+PAGES.clients=list({eb:'User Management',title:'Clients',desc:'All clients across every agent.',filters:[['Search','t',0,'Username'],['Agent','t',0,'Agent username'],['Status','s',['All','Active','Suspended']]],cols:['Username','Agent','Numbers','Daily limit','Status','Created','Actions'],empty:'No clients yet.',exp:1});
+PAGES.admins=form({eb:'Access Control',title:'Create Admin User',desc:'Choose a role and the exact permissions this admin receives.',fields:[['Username','t',0,'',1],['Email','e',0,'',1],['Password','p',0,'',1],['Role','s',['Super Admin','Admin','Support','Finance']]],mid:`<div class="f"><label>Permissions</label>${chips(['users.read','users.write','pricing.write','inventory.manage','providers.manage','finance.approve','messages.read_content','announcements.publish','settings.write','audit.read'])}</div>`,btn:'Create admin'})
++list({eb:'Access Control',title:'Admin Users',cols:['Username','Email','Role','2FA','Status','Last login','Actions'],empty:'No admin users yet.'});
+PAGES.activity=list({eb:'Monitoring',title:'Agent Activity Feed',desc:'Logins, allocations, API usage and settings changes, as they happen.',filters:[['Agent','t',0,'Agent username'],['Event type','s',['All','Login','Failed login','Allocation','Release','API call','Payout request','Settings change']],['Date from','dt'],['Date to','dt']],cols:['Time','Agent','Event','IP address','Details'],empty:'No activity recorded yet.',exp:1});
+PAGES.review=list({eb:'Monitoring',title:'Review Queue',desc:'Flagged behaviour waiting for an admin decision.',filters:[['Severity','s',['All','Low','Medium','High']],['Status','s',['Open','Accepted','Suspended','Blocked']]],cols:['Created','Agent','Reason','Severity','Status','Actions'],empty:'Nothing to review.'});
+PAGES.ranges=list({eb:'Inventory',title:'Ranges',desc:'Ranges synced from your providers. Enable, disable and limit them here.',filters:[['Search','t',0,'Range name or prefix'],['Provider','t',0,'Provider name'],['Status','s',['All','Enabled','Disabled']]],cols:['Name','Provider','Country','Prefix','Free','Allocated','Daily limit','Enabled'],empty:'No ranges yet. Connect a provider to sync inventory.',exp:1})
++form({eb:'Limits',title:'Daily Range Limit',desc:'Maximum numbers a range can allocate per day. Resets at 00:00 UTC.',fields:[['Range','t',0,'Range name',1],['Agent (optional)','t',0,'Leave empty for all agents'],['Limit per day','n',0,'',1]],btn:'Save limit'});
+PAGES.numbers=list({eb:'Inventory',title:'Numbers',desc:'Every number in stock, with its status and owner.',filters:[['Range','t',0,'Range name'],['Status','s',['All','Free','Allocated','Quarantined','Retired']],['Agent','t',0,'Agent username'],['Number','t']],cols:['Number','Range','Status','Agent','Client','Last SMS'],empty:'No numbers yet.',exp:1});
+PAGES.pricing=form({eb:'Global Pricing',title:'Set Range Payout',desc:'Each change creates a new effective-dated price. Past messages keep their original price.',fields:[['Range','t',0,'Range name',1],['Payterm','s',['Weekly','Monthly','Per SMS']],['Currency','t',0,'Currency code',1],['Agent payout','n',0,'Amount per SMS',1],['Effective from','dt']],btn:'Save payout'})
++form({eb:'Bulk Edit',title:'Import Payouts (CSV)',desc:'Upload a CSV with range, payterm, currency, payout and effective date columns.',fields:[['CSV file','f',0,'',1]],btn:'Validate and import'})
++list({eb:'Current Prices',title:'Range Payouts',filters:[['Range','t',0,'Range name'],['Payterm','s',['All','Weekly','Monthly','Per SMS']],['Currency','t',0,'Currency code']],cols:['Range','Payterm','Currency','Agent payout','Effective from','Set by','History'],empty:'No payouts set yet.',exp:1})
++list({eb:'Overrides',title:'Agent Overrides',desc:'Payouts that replace the global price for one agent.',cols:['Agent','Range','Payterm','Currency','Payout','Effective from','Actions'],empty:'No overrides yet.'});
+PAGES.providers=form({eb:'Automated APIs',title:'Add Provider Connection',desc:'Connect an upstream provider to sync ranges and numbers automatically.',fields:[['Name','t',0,'',1],['Connection type','s',['REST API (pull)','Webhook (push)','REST API and webhook']],['Base URL','t',0,'https://',1],['Authentication','s',['API key header','Bearer token','Basic auth','HMAC signature']],['API key or username','p',0,'',1],['Secret or password','p'],['Sync interval (minutes)','n',0,'',1],['Ranges endpoint path','t',0,'/ranges'],['Numbers endpoint path','t',0,'/numbers'],['Messages endpoint path','t',0,'/messages'],['Field mapping (JSON)','a',0,'{"msisdn": "$.number", "range": "$.range_name"}'],['Enabled','s',['Yes','No']]],btn:'Save connection',more:ax('Test connection')+ax('Dry run sync')})
++list({eb:'Connections',title:'Provider Connections',cols:['Name','Type','Base URL','Interval','Status','Last sync','Actions'],empty:'No providers connected.'})
++list({eb:'Sync History',title:'Sync Runs',filters:[['Provider','t',0,'Provider name'],['Mode','s',['All','Live','Dry run']],['Status','s',['All','Success','Failed','Running']]],cols:['Started','Provider','Mode','Status','Added','Updated','Retired','Errors'],empty:'No sync runs yet.'});
+PAGES.payouts=list({eb:'Finance',title:'Payout Requests',desc:'Approve, reject or mark payouts as paid.',filters:[['Status','s',['All','Pending','Approved','Paid','Rejected']],['Agent','t',0,'Agent username'],['Date from','d'],['Date to','d']],cols:['Date','Agent','Amount','Currency','Method','Destination','Status','Actions'],empty:'No payout requests yet.',exp:1});
+PAGES.ledger=list({eb:'Finance',title:'Global Ledger',filters:[['Agent','t',0,'Agent username'],['Currency','t',0,'Currency code'],['Direction','s',['All','Credit','Debit']],['Date from','d'],['Date to','d']],cols:['Date','Agent','Type','Direction','Amount','Currency','Reference'],empty:'No ledger entries yet.',exp:1})
++form({eb:'Adjustment',title:'Wallet Adjustment',desc:'Every adjustment needs a reason and is recorded in the audit log.',fields:[['Agent','t',0,'Agent username',1],['Currency','t',0,'Currency code',1],['Direction','s',['Credit','Debit']],['Amount','n',0,'',1],['Reason','a',0,'',1]],btn:'Post adjustment'});
+PAGES.messages=list({eb:'Messages & CDR',title:'Messages & CDR',desc:'Message text is masked unless your role has the messages.read_content permission.',filters:[['Date from','dt'],['Date to','dt'],['Agent','t',0,'Agent username'],['Client','t',0,'Client username'],['Range','t',0,'Range name'],['Number','t'],['CLI','t'],['Message text','t']],extra:`<div class="f"><label>Group by</label>${chips(['Hour','Date','Month','Agent','Client','Range','Number','CLI'])}</div>`,cols:['Date','Agent','Client','Range','Number','CLI','SMS','Payout'],empty:'No messages found.',exp:1});
+PAGES.announcements=form({eb:'Communication',title:'New Announcement',fields:[['Title','t',0,'',1],['Message','a',0,'',1],['Audience','s',['All agents','One agent']],['Agent username (if one agent)','t'],['Publish at','dt'],['Expires at','dt']],btn:'Publish announcement'})
++list({eb:'Communication',title:'Announcements',cols:['Title','Audience','Status','Publish at','Expires at','Actions'],empty:'No announcements yet.'});
+PAGES.chat=list({eb:'Communication',title:'Support Chat',desc:'Support groups between agents, the support team and managers.',cols:['Group','Members','Last message','Unread'],empty:'No support groups yet.'});
+PAGES.audit=list({eb:'Security',title:'Audit Log',desc:'An append-only record of every sensitive action.',filters:[['Actor','t',0,'Username'],['Action','t'],['Entity','t'],['Date from','dt'],['Date to','dt']],cols:['Time','Actor','Role','Action','Entity','IP address'],empty:'No audit entries yet.',exp:1});
+PAGES.settings=form({eb:'System',title:'System Settings',fields:[['Platform name','t',0,'',1],['Default currency','t',0,'Currency code'],['Default max clients per agent','n'],['Number quarantine after release (hours)','n'],['Earnings safety period (hours)','n'],['Message content retention (days)','n'],['New agent approval','s',['Required','Automatic']],['Two-person approval for pricing changes','s',['Off','On']],['Require two-factor for admins','s',['Yes','No']]],btn:'Save settings'});
+PAGES.profile=form({eb:'Account',title:'Admin Profile',fields:[['Full name','t',0,'',1],['Email','e',0,'',1]],btn:'Save changes'})
++form({eb:'Security',title:'Change Password',fields:[['Current password','p',0,'',1],['New password','p',0,'',1],['Confirm new password','p',0,'',1]],btn:'Change password'});
+
+const M=[['Dashboard','dash','dash'],
+['User Management','users',null,[['Agents','users','agents'],['Clients','user','clients'],['Admins & Roles','shield','admins']]],
+['Monitoring','pulse',null,[['Activity Feed','pulse','activity'],['Review Queue','shield','review']]],
+['Inventory','sliders',null,[['Ranges','sliders','ranges'],['Numbers','phone','numbers']]],
+['Global Pricing','bill','pricing'],['Provider APIs','hook','providers'],
+['Finance','wallet',null,[['Payout Requests','wallet','payouts'],['Ledger','bill','ledger']]],
+['Messages & CDR','search','messages'],['Announcements','ann','announcements'],['Support Chat','chat','chat'],
+['Audit Log','book','audit'],['System Settings','sliders','settings'],['Profile','prof','profile']];
+const T={};
+document.getElementById('nv').innerHTML=M.map(([l,i,id,c],k)=>{if(id)T[id]=l;return `<button class="nav${k?'':' act'}"${id?` data-id="${id}"`:''}>${S(i)}${l}${c?`<span class="ch">${S('chev')}</span>`:''}</button>`+(c?`<div class="sub">${c.map(([a,j,d])=>{T[d]=a;return `<a href="#" data-id="${d}">${S(j)}${a}</a>`}).join('')}</div>`:'')}).join('');
+q('#mn').innerHTML=Object.entries(PAGES).map(([id,h])=>`<div class="pg${id==='dash'?' on':''}" id="p-${id}">${h}</div>`).join('');
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=S(e.dataset.i));
+const go=(id,el)=>{document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+id));document.querySelectorAll('.nav,.sub a').forEach(x=>x.classList.remove('act'));if(el)el.classList.add('act');q('.ttl b').textContent=T[id]||'';t(false);scrollTo(0,0)};
+document.querySelectorAll('.nav,.sub a').forEach(el=>{const n=el.nextElementSibling;if(el.dataset.id)el.addEventListener('click',e=>{e.preventDefault();go(el.dataset.id,el)});else if(n&&n.classList.contains('sub'))el.onclick=()=>{const o=n.classList.contains('show');document.querySelectorAll('.sub').forEach(x=>x.classList.remove('show'));document.querySelectorAll('.nav').forEach(x=>x.classList.remove('opn'));if(!o){n.classList.add('show');el.classList.add('opn')}}});
+document.querySelectorAll('.sb,.ax').forEach(x=>x.onclick=()=>{const m=x.closest('section').querySelector('.msg');if(m)m.textContent=ERR});
+document.querySelectorAll('form.af').forEach(f=>f.onsubmit=e=>{e.preventDefault();const bad=[...f.querySelectorAll('[data-req]')].some(x=>!x.value.trim());f.querySelector('.msg').textContent=bad?'Please fill in the required fields.':ERR});
+document.querySelectorAll('.rf').forEach(x=>x.onclick=()=>{x.classList.add('spin');setTimeout(()=>x.classList.remove('spin'),700)});
+const days=Array.from({length:7},(_,i)=>new Date(Date.now()-(6-i)*864e5).toLocaleDateString('en',{weekday:'short'}));
+const drawChart=d=>{const mx=Math.max(...d,1);q('#chart').innerHTML=d.map((v,i)=>`<div class="bar"><em>${v}</em><div style="height:${Math.max(v/mx*100,3)}%"></div>${days[i]}</div>`).join('')};drawChart([0,0,0,0,0,0,0]);
+q('#ts').textContent=new Date().toLocaleTimeString();
+let tm=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+q('#theme').onclick=()=>{tm=tm==='dark'?'light':'dark';document.documentElement.dataset.theme=tm};
+</script>
+<style>#gate{position:fixed;inset:0;z-index:99;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}#gate.on{display:flex}#gate .card{width:100%;max-width:420px;margin:0}#gate input{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:0 16px;font:inherit;margin-bottom:12px}</style>
+<div id="gate" class="on"><section class="card"><div class="eyebrow">MSI SMS Admin</div><h2 id="gt">Admin sign in</h2><form id="gf"><input id="gu" placeholder="Username" autocomplete="username" required><input id="gp" type="password" placeholder="Password (min 8 characters)" autocomplete="current-password" required><div id="gx" style="display:none"><input id="gn" placeholder="Full name"><input id="ge" type="email" placeholder="Email"></div><button class="btn g wide" type="submit" id="gb">Sign in</button><div class="msg" id="gm"></div></form><p class="muted" style="margin:14px 0 0;display:none" id="gs">No admin exists yet. <a href="#" id="gl" style="color:var(--blue)">Create the first admin</a></p></section></div>
+<script>
+(()=>{const M=window.MSI,g=q('#gate'),gm=q('#gm');let first=false,go=0,AG=[],CL=[],AD=[];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ST={'Pending approval':'pending',Active:'active',Suspended:'suspended',Blocked:'blocked'};
+const btn=(u,s,l)=>`<button class="sm" data-u="${u}" data-s="${s}" style="margin:2px">${l}</button>`;
+const acts=x=>(x.status!=='active'?btn(x.uid,'active',x.status==='pending'?'Approve':'Activate'):'')+(x.status==='active'?btn(x.uid,'suspended','Suspend'):'')+(x.status!=='blocked'?btn(x.uid,'blocked','Block'):'');
+const d=t=>t?new Date(t).toLocaleDateString():'—';
+const fill=(id,rows,n,cols)=>{q(id+' tbody').innerHTML=rows.length?rows.join(''):`<tr><td colspan="${cols}" class="muted">Nothing found.</td></tr>`;q(id+' .pgn span').textContent='Showing '+(n?1:0)+' to '+rows.length+' of '+n+' entries - 1 / 1'};
+const pc=document.createElement('section');pc.className='card';pc.innerHTML='<div class="eyebrow">Review</div><h2>Pending Applications</h2><p class="muted" style="margin:0 0 14px">New agents cannot sign in until you approve them.</p><div class="dw box"><table style="min-width:760px"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Country</th><th>Applied</th><th>Actions</th></tr></thead><tbody></tbody></table></div>';
+q('#p-dash .card.hero').after(pc);
+pc.onclick=e=>{const b=e.target.closest('[data-u]');if(b)M.setStatus(b.dataset.u,b.dataset.s).catch(x=>alert(x.message))};
+const rAg=()=>{const pe=AG.filter(x=>x.status==='pending');pc.querySelector('tbody').innerHTML=pe.length?pe.map(x=>`<tr><td>${esc(x.username)}</td><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td>${esc(x.whatsapp)}</td><td>${esc(x.country)}</td><td>${d(x.createdAt)}</td><td>${btn(x.uid,'active','Approve')}${btn(x.uid,'blocked','Reject')}</td></tr>`).join(''):'<tr><td colspan="7" class="muted">No pending applications.</td></tr>';
+ const s=q('#p-agents .f input').value.trim().toLowerCase(),st=ST[q('#p-agents select').value];
+ const r=AG.filter(x=>(!s||[x.username,x.name,x.email].join(' ').toLowerCase().includes(s))&&(!st||x.status===st));
+ fill('#p-agents',r.map(x=>`<tr><td>${esc(x.username)}</td><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td>${CL.filter(c=>c.agentId===x.uid).length}</td><td>0</td><td>${esc(x.status)}</td><td>—</td><td>${acts(x)}</td></tr>`),r.length,8);
+ const k=document.querySelectorAll('#p-dash .stat strong');if(k[2])k[2].textContent=AG.filter(x=>x.status==='active').length;if(k[3])k[3].textContent=AG.filter(x=>x.status==='pending').length;
+ const b=q('.badge'),n=AG.filter(x=>x.status==='pending').length;b.textContent=n;b.style.display=n?'':'none'};
+const rCl=()=>{const f=document.querySelectorAll('#p-clients .f input'),s=f[0].value.trim().toLowerCase(),a=f[1].value.trim().toLowerCase(),st=q('#p-clients select').value;
+ const nm=id=>(AG.find(x=>x.uid===id)||{}).username||'—';
+ const r=CL.filter(x=>(!s||x.username.includes(s))&&(!a||nm(x.agentId).includes(a))&&(st==='All'||x.status===st.toLowerCase()));
+ fill('#p-clients',r.map(x=>`<tr><td>${esc(x.username)}</td><td>${esc(nm(x.agentId))}</td><td>0</td><td>—</td><td>${esc(x.status)}</td><td>${d(x.createdAt)}</td><td>${x.status==='active'?btn(x.uid,'suspended','Suspend'):btn(x.uid,'active','Activate')}</td></tr>`),r.length,7);rAg()};
+const rAd=()=>fill('#p-admins',AD.map(x=>`<tr><td>${esc(x.username)}</td><td>${esc(x.email)}</td><td>${esc(x.adminRole||'Admin')}</td><td>—</td><td>${esc(x.status)}</td><td>—</td><td></td></tr>`),AD.length,7);
+const start=()=>{if(go)return;go=1;
+ M.watch({role:'agent'},r=>{AG=r;rAg();rCl()});M.watch({role:'client'},r=>{CL=r;rCl()});M.watch({role:'admin'},r=>{AD=r;rAd()});
+ ['#p-agents','#p-clients'].forEach(id=>{q(id+' .sb').onclick=id==='#p-agents'?rAg:rCl;q(id+' tbody').onclick=e=>{const b=e.target.closest('[data-u]');if(b)M.setStatus(b.dataset.u,b.dataset.s).catch(x=>alert(x.message))}});
+ q('#p-agents form.af').onsubmit=async e=>{e.preventDefault();const f=e.target,v=[...f.querySelectorAll('input,select')].map(x=>x.value.trim()),m=f.querySelector('.msg');
+  if(!v[0]||!v[1]||!v[2]||!v[3])return m.textContent='Please fill in the required fields.';m.textContent='Creating…';
+  try{await M.createUser({username:v[0],password:v[1],name:v[2],email:v[3],whatsapp:v[4],country:v[5],role:'agent',status:ST[v[7]]||'active'});m.textContent='Agent "'+v[0].toLowerCase()+'" created.';f.reset()}catch(x){m.textContent=x.message}};
+ q('#p-admins form.af').onsubmit=async e=>{e.preventDefault();const f=e.target,v=[...f.querySelectorAll('input:not([type=checkbox]),select')].map(x=>x.value.trim()),m=f.querySelector('.msg');
+  if(!v[0]||!v[1]||!v[2])return m.textContent='Please fill in the required fields.';m.textContent='Creating…';
+  try{await M.createUser({username:v[0],email:v[1],password:v[2],name:v[0],role:'admin',status:'active',extra:{adminRole:v[3]}});m.textContent='Admin "'+v[0].toLowerCase()+'" created.';f.reset()}catch(x){m.textContent=x.message}}};
+q('[aria-label="Logout"]').onclick=()=>M.logout();
+M.adminExists().then(x=>{q('#gs').style.display=x?'none':''}).catch(()=>{});
+q('#gl').onclick=e=>{e.preventDefault();first=true;q('#gx').style.display='';q('#gb').textContent='Create admin & sign in';q('#gt').textContent='Create first admin'};
+q('#gf').onsubmit=async e=>{e.preventDefault();gm.textContent=first?'Creating admin…':'Signing in…';
+ try{if(first)await M.bootstrapAdmin({username:q('#gu').value.trim(),password:q('#gp').value,name:q('#gn').value.trim(),email:q('#ge').value.trim()});else await M.login(q('#gu').value.trim(),q('#gp').value)}catch(x){gm.textContent=x.message}};
+M.listen(p=>{if(p&&p.role==='admin'&&p.status==='active'){g.classList.remove('on');q('.ttl span').textContent='Admin · '+p.username;start()}
+ else{g.classList.add('on');if(p){gm.textContent='The signed-in account is not an admin. Sign in with an admin account.'}}});
+setTimeout(()=>{if(M.me===undefined)g.classList.add('on')},500);
+})();
+</script>
+</body>
+</html>

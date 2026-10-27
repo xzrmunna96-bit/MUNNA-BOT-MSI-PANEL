@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function myDoc() { return get(/databases/$(db)/documents/users/$(request.auth.uid)); }
+    function hasDoc() { return exists(/databases/$(db)/documents/users/$(request.auth.uid)); }
+    function isAdmin() { return signedIn() && hasDoc() && myDoc().data.role == 'admin' && myDoc().data.status == 'active'; }
+    function isAgent() { return signedIn() && hasDoc() && myDoc().data.role == 'agent'; }
+
+    // Marker doc: lets the FIRST admin be created once, then locks that door.
+    match /meta/{d} {
+      allow read: if true;
+      allow create: if signedIn() && d == 'admin' && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /users/{id} {
+      allow get: if signedIn() && (request.auth.uid == id || isAdmin()
+                    || (isAgent() && resource.data.agentId == request.auth.uid));
+      allow list: if signedIn() && (isAdmin()
+                    || (isAgent() && resource.data.agentId == request.auth.uid));
+
+      allow create: if signedIn() && (
+        // 1) someone registers themselves as an agent (always starts "pending")
+        (request.auth.uid == id && request.resource.data.role == 'agent'
+          && request.resource.data.status == 'pending'
+          && !('agentId' in request.resource.data))
+        // 2) admin creates any account
+        || isAdmin()
+        // 3) an ACTIVE agent creates a client under themselves
+        || (isAgent() && myDoc().data.status == 'active'
+          && request.resource.data.role == 'client'
+          && request.resource.data.agentId == request.auth.uid
+          && request.resource.data.status == 'active')
+        // 4) the very first admin (only while meta/admin does not exist yet)
+        || (request.auth.uid == id && request.resource.data.role == 'admin'
+          && !exists(/databases/$(db)/documents/meta/admin)
+          && getAfter(/databases/$(db)/documents/meta/admin).data.uid == request.auth.uid)
+      );
+
+      allow update: if signedIn() && (
+        isAdmin()
+        || (request.auth.uid == id && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['name', 'email', 'whatsapp', 'country']))
+        || (isAgent() && resource.data.agentId == request.auth.uid
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+              && request.resource.data.status in ['active', 'suspended'])
+      );
+
+      allow delete: if isAdmin();
+    }
+  }
+}
